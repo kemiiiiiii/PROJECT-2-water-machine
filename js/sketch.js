@@ -71,12 +71,23 @@ function onTyping(){
 }
 
 function draw() {
-  // Use keyboard input to drive bg  
+// Define character count in draw 
+let charCount = myInput.value().length; 
+
+// Use keyboard input to drive bg  
   background(255);
-
-
-  // Define character count in draw 
-  let charCount = myInput.value().length; 
+  // rect that expands based on char count
+  // map charcCount to rect length
+  // lerp for smoothness
+  push();jhb
+    rectMode(CORNER);
+    let rectLength = map(charCount, 0, 50, -2900, windowWidth);
+    let smoothedRectLength = lerp(rectLength, windowWidth, 0.5); 
+    // for loop to smooth out more?
+    noStroke();
+    fill('#1ea4f7');
+    rect(0, 0, smoothedRectLength, windowHeight); //  change windowheight to the mapped lerped variable
+  pop();
 
 ////PORT: SENDING INPUT/////
 // Update button label based on connection status
