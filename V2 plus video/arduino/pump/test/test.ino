@@ -1,10 +1,5 @@
 int waterPumpPin = 8;
 
-// fan motor pins
-int fanPin1= 3;
-int fanPin2=  10;
-
-
 void setup() {
   // pump initialise
   pinMode(waterPumpPin, OUTPUT);
@@ -20,6 +15,6 @@ void loop() {
 
   //off
   digitalWrite(waterPumpPin, LOW);
-  delay(500);
+  delay(10000); // 10 seconds
   Serial.println('MOTOR OFF');
 }

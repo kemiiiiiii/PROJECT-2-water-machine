@@ -1,6 +1,7 @@
 
 // DESCRIPTION: take in typed keyboard input
 // and send string over webserial to trigger pump
+// map water usage: check how much water the pump expels 
 
 
 // VARIABLES: serial port
@@ -79,7 +80,7 @@ let charCount = myInput.value().length;
   // rect that expands based on char count
   // map charcCount to rect length
   // lerp for smoothness
-  push();jhb
+  push();
     rectMode(CORNER);
     let rectLength = map(charCount, 0, 50, -2900, windowWidth);
     let smoothedRectLength = lerp(rectLength, windowWidth, 0.5); 
