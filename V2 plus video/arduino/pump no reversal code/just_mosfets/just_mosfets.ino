@@ -6,8 +6,8 @@
 
 
 // Pump pin
-int waterPumpPin = 2;
-int waterPumpPin2 = 8;
+int pumpCountPin = 2;
+int videoCountPin = 8;
 
 // Web serial
 String data = "";
@@ -15,8 +15,8 @@ String data = "";
 
 void setup() {
  // Pump initialise
- pinMode(waterPumpPin, OUTPUT);
- pinMode (waterPumpPin2, OUTPUT);
+ pinMode(pumpCountPin, OUTPUT);
+ pinMode (videoCountPin, OUTPUT);
 
  // Serial initalise
  Serial.begin(9600);
@@ -30,14 +30,12 @@ if (Serial.available() > 0){
  data.trim();
 
   if (data == "runPump") {
-    // Pump 2 ON
-    for (int i = 0; i <5; i++){
+
      // Pump 2 ON
-      digitalWrite(waterPumpPin2, HIGH);         // pump ON
+      digitalWrite(videoCountPin, HIGH);         // pump ON
       delay(500);
-      digitalWrite(waterPumpPin2, LOW);         // pump OFF
+      digitalWrite(videoCountPin, LOW);         // pump OFF
       delay(500);  
-    }
 
     // Send completion msg to p5 
     Serial.println("Video pump done");
@@ -48,9 +46,9 @@ if (Serial.available() > 0){
   
    // Pulse motor based on pump count
   for(int count = 0; count < pumpCount; count++){
-    digitalWrite(waterPumpPin, HIGH);         // pump ON
+    digitalWrite(pumpCountPin, HIGH);         // pump ON
     delay(500);
-    digitalWrite(waterPumpPin, LOW);         // pump OFF
+    digitalWrite(pumpCountPin, LOW);         // pump OFF
     delay(500);
 
 

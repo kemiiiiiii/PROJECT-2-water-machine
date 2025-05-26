@@ -38,8 +38,6 @@ if (Serial.available() > 0){
   
   // Run pump 2 based on js runPump command string
   if (data == "runPump") {
-    // Pump 2 ON
-    for (int i = 5; i <5; i++){
      // Pump 2 ON
     digitalWrite(motor2pin1, HIGH); 
     digitalWrite(motor2pin2, LOW); 
@@ -48,7 +46,7 @@ if (Serial.available() > 0){
     // Pump 2 OFF
     digitalWrite(motor2pin1, LOW); 
     digitalWrite(motor2pin2, LOW);  
-    }
+    
 
     // Send completion msg to p5 
     Serial.println("Video pump done");

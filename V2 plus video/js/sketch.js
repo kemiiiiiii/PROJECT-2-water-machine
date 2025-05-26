@@ -9,11 +9,14 @@ let connectBtn;         // input button
 
 // VARIABLES: flags
 let nextInputReady = false; // flag that will turn true when arduino serial data gets sent back
+
+// VARIABLES: counters
 let inputMlCounter = 0; // input counter for text
 let vidMlCounter = 0;   // input counter for text
 
 // VARIABLES: video 
 let player;
+let pumpInterval; // stores vid pump time pause intervals
 
 // VARIABLES: font
 let font;
@@ -90,7 +93,7 @@ function inputBtnClick(){
     let charCount = myInput.value().length;
     let charCountStr = String(charCount);    // Convert charcount to string
     port.write(charCountStr + '\n');         // Send charcount with newline
-    inputMlCounter +=5;
+    // inputMlCounter +=5;
     
     // Lock button
     nextInputReady = false;
@@ -146,8 +149,8 @@ let charCount = myInput.value().length;
   }
 
 if (port && port.opened()){  // if port exists & if the port is opened  
-  let greenLight = port.readUntil('\n');
-  if (greenLight.length > 0) {
+  let greenLight = port.readUntil('\n'); // assign port reading to variable
+  if (greenLight.length > 0) { // read variable
     if (greenLight.trim() === 'Word processed'){
       nextInputReady = true;
     } else {
@@ -191,7 +194,7 @@ if (port && port.opened()){  // if port exists & if the port is opened
   textAlign(LEFT,CENTER);
     textFont(font);
     textSize(30);
-    text('Input water usage (ml):   ' + (inputMlCounter), width/2.5-40, height/3 + 900);
+    text('Input water usage (ml):   ' + (charCount + (inputMlCounter)), width/2.5-40, height/3 + 900);
     text('Video water usage (ml):  ' + (vidMlCounter) , width/2.5-40, height/3 + 940);
   pop();
 }
@@ -215,10 +218,27 @@ function onYouTubeIframeAPIReady() {
 function onPlayerStateChange(event){
   if (event.data === YT.PlayerState.PLAYING){
     console.log("Video playing!");
-    if (port.opened()){
-      port.write("runPump" + '\n'); // send cmd to arduino for pump activation
-      vidMlCounter +=5; // update vid ml counter
+
+    // Pump interval: 1 pump every 5 mins = 1
+    pumpInterval = setInterval(() =>{ 
+      // run code that should happen intermittently here
+    if (port.opened()) {
+      port.write("runPump\n"); // send cmd to arduino for pump activation
+      vidMlCounter +=1; // update vid ml counter
+      console.log('working');
     }
+    }, 300000); // every 5 mins
+    
+    
+  } else {
+    // stop pump if paused / stop interval function 
+    clearInterval(pumpInterval); 
+    console.log('not working');
+
   }
 }
+
+// for later: add a video queue and make it so that
+// when text tank is full, send msg to arduino so that
+// motor flow is reversed and tank is drained
 
