@@ -5,13 +5,13 @@
 // using the L298N Bi-directional Dual Motor Driver to reverse flow
 
 // Motor pump 1
-const int motor1pin1 =
-const int motor2pin2 =
-const int ENA = 
+const int pumpCountpin1 = 8;
+const int pumpCountpin2 = 7;
+const int ENA = 3;
 // Motor pump 2
-const int motor2pin1 =
-const int motor2pin2 =
-const int ENA = 
+const int videoCountpin1 = 12;
+const int videoCountpin2 = 13;
+const int ENB = 10;
 
 
 
@@ -21,9 +21,9 @@ String data = "";
 
 void setup() {
   // Pump 1 initialise
-  pinMode(motor1pin1, OUTPUT); pinMode(motor2pin2, OUTPUT); pinMode(ENA, OUTPUT); 
+  pinMode(pumpCountpin1, OUTPUT); pinMode(pumpCountpin2, OUTPUT); pinMode(ENA, OUTPUT); 
   // Pump 2 initialise
-  pinMode(motor2pin1, OUTPUT); pinMode(motor2pin2, OUTPUT); pinMode(ENB, OUTPUT); 
+  pinMode(videoCountpin1, OUTPUT); pinMode(videoCountpin2, OUTPUT); pinMode(ENB, OUTPUT); 
 
 
   // Serial initalise
@@ -39,13 +39,13 @@ if (Serial.available() > 0){
   // Run pump 2 based on js runPump command string
   if (data == "runPump") {
      // Pump 2 ON
-    digitalWrite(motor2pin1, HIGH); 
-    digitalWrite(motor2pin2, LOW); 
+    digitalWrite(videoCountpin1, HIGH); 
+    digitalWrite(videoCountpin2, LOW); 
     analogWrite(ENB, 255); // full speed  
     delay(500);
     // Pump 2 OFF
-    digitalWrite(motor2pin1, LOW); 
-    digitalWrite(motor2pin2, LOW);  
+    digitalWrite(videoCountpin1, LOW); 
+    digitalWrite(videoCountpin2, LOW);  
     
 
     // Send completion msg to p5 
@@ -59,13 +59,14 @@ if (Serial.available() > 0){
   for(int count = 0; count < pumpCount; count++){
 
     // Pump 1 ON
-    digitalWrite(motor1pin1, HIGH); 
-    digitalWrite(motor1pin2, LOW);
+    digitalWrite(pumpCountpin1, HIGH); 
+    digitalWrite(pumpCountpin2, LOW);
     analogWrite(ENA, 255); // full speed
     delay(500);
     // Pump 1 OFF
-    digitalWrite(motor1pin1, LOW); 
-    digitalWrite(motor1pin2, LOW);  
+    digitalWrite(pumpCountpin1, LOW); 
+    digitalWrite(pumpCountpin2, LOW);  
+    delay(500);
 
     // Send completion msg to p5 
     if (count == pumpCount -1){
@@ -77,4 +78,5 @@ if (Serial.available() > 0){
 
 
 
+} 
 }

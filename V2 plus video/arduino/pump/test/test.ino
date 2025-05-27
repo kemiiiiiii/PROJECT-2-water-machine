@@ -15,6 +15,6 @@ void loop() {
 
   //off
   digitalWrite(waterPumpPin, LOW);
-  delay(10000); // 10 seconds
+  delay(500); // 10 seconds
   Serial.println('MOTOR OFF');
 }

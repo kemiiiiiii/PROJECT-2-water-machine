@@ -13,6 +13,7 @@ let nextInputReady = false; // flag that will turn true when arduino serial data
 // VARIABLES: counters
 let inputMlCounter = 0; // input counter for text
 let vidMlCounter = 0;   // input counter for text
+let inputTotalml = 0;   // charCount input + starting 5ml text input
 
 // VARIABLES: video 
 let player;
@@ -93,7 +94,9 @@ function inputBtnClick(){
     let charCount = myInput.value().length;
     let charCountStr = String(charCount);    // Convert charcount to string
     port.write(charCountStr + '\n');         // Send charcount with newline
-    // inputMlCounter +=5;
+    // counter update
+    inputMlCounter += charCount +=5; // per msg
+    inputTotalml += charCount; // accumulate variable
     
     // Lock button
     nextInputReady = false;
@@ -149,13 +152,11 @@ let charCount = myInput.value().length;
   }
 
 if (port && port.opened()){  // if port exists & if the port is opened  
-  let greenLight = port.readUntil('\n'); // assign port reading to variable
+  let greenLight = port.readUntil('\n'); // assign port reading to variable greenLight
   if (greenLight.length > 0) { // read variable
     if (greenLight.trim() === 'Word processed'){
       nextInputReady = true;
-    } else {
-      nextInputReady = false;
-    }
+    } 
   }
 }
 
@@ -194,7 +195,7 @@ if (port && port.opened()){  // if port exists & if the port is opened
   textAlign(LEFT,CENTER);
     textFont(font);
     textSize(30);
-    text('Input water usage (ml):   ' + (charCount + (inputMlCounter)), width/2.5-40, height/3 + 900);
+    text('Input water usage (ml):   ' + (inputTotalml), width/2.5-40, height/3 + 900);
     text('Video water usage (ml):  ' + (vidMlCounter) , width/2.5-40, height/3 + 940);
   pop();
 }
@@ -219,15 +220,19 @@ function onPlayerStateChange(event){
   if (event.data === YT.PlayerState.PLAYING){
     console.log("Video playing!");
 
-    // Pump interval: 1 pump every 5 mins = 1
+    // Pump interval
     pumpInterval = setInterval(() =>{ 
+      console.log('interval fired');
       // run code that should happen intermittently here
     if (port.opened()) {
+      console.log("port.opened():", port.opened());
       port.write("runPump\n"); // send cmd to arduino for pump activation
       vidMlCounter +=1; // update vid ml counter
       console.log('working');
+    } else {
+      console.log('port not open');
     }
-    }, 300000); // every 5 mins
+    }, 5000); // every 5 seconds
     
     
   } else {
