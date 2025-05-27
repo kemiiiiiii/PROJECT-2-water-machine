@@ -53,7 +53,8 @@ if (Serial.available() > 0){
   }
 
   else if (data.length() > 0){
-    int pumpCount = data.toInt();  // convert the string to an int
+    int pumpCount = data.toInt() + 5;  // convert the string to an int
+
     
   // Pulse pump 1 based on js charCount number str
   for(int count = 0; count < pumpCount; count++){
