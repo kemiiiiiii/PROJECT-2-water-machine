@@ -13,17 +13,17 @@ canvas {
 }
 
 #player {
-  position: absolute;      /* Take the element out of normal flow and position relative to the nearest positioned ancestor or the viewport */
-  top: 0;                  /* Align the top edge of the element with the top edge of the viewport */
-  right: 0;                /* Align the right edge of the element with the right edge of the viewport */
-  width: 50vw;             /* Set the width to 50% of the viewport’s width, making it take half the screen horizontally */
-  height: 100vh;           /* Set the height to 100% of the viewport’s height, making it full height of the screen */
-  z-index: 10;             /* Stack this element above others with a lower z-index to ensure it appears on top if overlapping */
+  position: absolute;     
+  top: 0;                  
+  right: 0;                
+  width: 50vw;             
+  height: 100vh;           
+  z-index: 10;             
 }
 
 #sketch {
   position: absolute;
-  top: 0;
+  top: 0px;
   left: 0;
   width: 50vw;
   height: 100vh;

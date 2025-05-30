@@ -5,10 +5,12 @@
 
 // VARIABLES: serial port
 let port;               // port
-let connectBtn;         // input button
+let connectBtn;         // connect to arduino button
+let reservoirBtn;       // flow back to reservoir button
 
 // VARIABLES: flags
 let nextInputReady = false; // flag that will turn true when arduino serial data gets sent back
+let drainageComplete = false; // flag that will turn true when arduino is done draining to reservoir
 
 // VARIABLES: counters
 let inputMlCounter = 0; // input counter for text
@@ -47,32 +49,51 @@ function setup() {
   push(); 
   connectBtn = createButton('Connect to Arduino');
   connectBtn.size(500, 100);
-  connectBtn.position(width/2-260, height/2 + 470);
+  connectBtn.position(width/2-260, height/2 + 450);
   connectBtn.mousePressed(connectBtnClick);
-  connectBtn.style('font-family', 'Helvetica');
-  connectBtn.style('z-index', '20');
-  connectBtn.style('font-size', '40px');
+    // styling
+    connectBtn.style('font-family', 'Helvetica');
+    connectBtn.style('z-index', '20');
+    connectBtn.style('font-size', '40px');
   pop();
 
   // INITIALISE: ENTER button
   push(); 
   inputBtn = createButton('ENTER');
   inputBtn.size(500, 100);
-  inputBtn.position(width/2-260, height/2 + 355);
+  inputBtn.position(width/2-260, height/2 + 320);
   inputBtn.mousePressed(inputBtnClick);
-  inputBtn.style('font-family', 'Helvetica');
-  inputBtn.style('z-index', '20');
-  inputBtn.style('font-size', '40px');
+    // styling
+    inputBtn.style('font-family', 'Helvetica');
+    inputBtn.style('z-index', '20');
+    inputBtn.style('font-size', '40px');
+  pop();
+
+  // INITIALISE: 'Back to Reservoir' button
+  push();
+  reservoirBtn = createButton('Back to Reservoir');
+  reservoirBtn.size(250,50);
+  reservoirBtn.position(width/2-130, height/2 +710);
+  reservoirBtn.mousePressed(reservoirBtnClick);
+    // styling
+    reservoirBtn.style('font-family', 'Helvetica');
+    reservoirBtn.style('z-index', '20');
+    reservoirBtn.style('font-size', '25px');
+    // reservoirBtn.style('color', '#ffffff');
+    // reservoirBtn.style('background-color', '#09203b');
+
   pop();
   
   // INITIALISE: input field
   myInput = createInput();
-  myInput.position(200, height/2 + 200);
+  myInput.position(200, height/2 + 160);
   myInput.size(1000,100);
-  myInput.style('z-index', '20');
-  myInput.style('font-family', 'Helvetica');
-  myInput.style('font-size', '60px');  // set font size 
-  myInput.attribute('maxlength', '50'); // set char limit to 50 
+    // styling
+    myInput.style('z-index', '20');
+    myInput.style('font-family', 'Helvetica');
+    myInput.style('font-size', '60px');  // set font size 
+    myInput.attribute('maxlength', '50'); // set char limit to 50 
+
   myInput.input(onTyping);              // calls function when text field receives input
 }
 
@@ -87,7 +108,7 @@ function connectBtnClick() {
   }
 
 }
-
+////PORT: SENDING INPUT/////
 // FUNCTION: PORT: Send typed input to Arduino over webserial
 function inputBtnClick(){
   if(port.opened()){
@@ -104,11 +125,21 @@ function inputBtnClick(){
   } 
 }
 
+// FUNCTION: PORT: send msg for counterflow
+function reservoirBtnClick(){
+  if (port.opened()){
+    port.write('reverseFlow' + '\n'); // send signal to trigger reverse
+    // Lock button
+    reservoirBtn.attribute('disabled', true); 
+  }
+}
+
 // FUNCTION: counts how much input text field receives
 function onTyping(){
   let charCount = myInput.value().length;
   // console.log(charCount);
 }
+
 
 function draw() {
 // Define character count in draw 
@@ -134,6 +165,8 @@ let charCount = myInput.value().length;
 
 ////PORT: READING ARDUINO INPUT/////
   // PORT: Read 'Word Processed message from Arduino and unlock button
+
+  // Flag to unlock the input button
   if (nextInputReady) {
   push();
   textAlign(LEFT,CENTER);
@@ -151,20 +184,49 @@ let charCount = myInput.value().length;
     inputBtn.attribute('disabled', true); // lock button
   }
 
+  // Flag to unlock reservoir button
+  if (drainageComplete) {
+  reservoirBtn.removeAttribute('disabled'); // btn unlock
+ } else {
+  reservoirBtn.attribute('disabled', true); // btn lock
+ }
+
+// Reading from the port
 if (port && port.opened()){  // if port exists & if the port is opened  
-  let greenLight = port.readUntil('\n'); // assign port reading to variable greenLight
-  if (greenLight.length > 0) { // read variable
+  let greenLight = port.readUntil('\n');      // assign port reading to variable greenLight
+  let reservoirSign = port.readUntil('\n');   // assign port reading to variable reservoirSign
+
+  if (greenLight.length > 0) { // reading to unlock inputbtn
     if (greenLight.trim() === 'Word processed'){
       nextInputReady = true;
     } 
-  }
+  } 
+  if (reservoirSign.length > 0) { // read to unlock reservoirbtn
+    if (reservoirSign.trim() === 'Drainage complete'){
+    drainageComplete = true;
+  }  
+} 
 }
+
+// PORT: Read 'Drainage complete' message from Arduino and unlock button
+// if (port && port.opened()){
+// let reservoirSign = port.readUntil('\n');
+// if (reservoirSign.length > 0) { // read variable
+//   if (reservoirSign.trim() === 'Drainage complete'){
+//     drainageComplete = true;
+//   }  
+// }
+// }
+
+if (drainageComplete) {
+  reservoirBtn.removeAttribute('disabled'); // btn unlock
+ } else {
+  reservoirBtn.attribute('disabled', true); // btn lock
+ }
 
 
 ////////////////////////////////
 ////// GRAPHICS ///////
-
-
 
   // title text
   push();
@@ -195,8 +257,8 @@ if (port && port.opened()){  // if port exists & if the port is opened
   textAlign(LEFT,CENTER);
     textFont(font);
     textSize(30);
-    text('Input water usage (ml):   ' + (inputTotalml), width/2.5-40, height/3 + 900);
-    text('Video water usage (ml):  ' + (vidMlCounter) , width/2.5-40, height/3 + 940);
+    text('Text water usage (ml):   ' + (inputTotalml), width/2.5-40, height/3 + 880);
+    text('Video water usage (ml):  ' + (vidMlCounter) , width/2.5-40, height/3 + 920);
   pop();
 }
 
@@ -246,4 +308,6 @@ function onPlayerStateChange(event){
 // for later: add a video queue and make it so that
 // when text tank is full, send msg to arduino so that
 // motor flow is reversed and tank is drained
+
+
 
