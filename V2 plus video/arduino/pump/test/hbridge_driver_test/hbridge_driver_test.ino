@@ -10,42 +10,37 @@ const int ENB = 10;
 
 
 
-// Web serial 
+// Web serial
 String data = "";
 
 
 void setup() {
   // Pump 1 initialise
-  pinMode(pumpCountpin1, OUTPUT); pinMode(pumpCountpin2, OUTPUT); pinMode(ENA, OUTPUT); 
+  pinMode(pumpCountpin1, OUTPUT);
+  pinMode(pumpCountpin2, OUTPUT);
+  pinMode(ENA, OUTPUT);
   // Pump 2 initialise
-  pinMode(videoCountpin1, OUTPUT); pinMode(videoCountpin2, OUTPUT); pinMode(ENB, OUTPUT); 
+  pinMode(videoCountpin1, OUTPUT);
+  pinMode(videoCountpin2, OUTPUT);
+  pinMode(ENB, OUTPUT);
 
 
   // Serial initalise
   Serial.begin(9600);
 }
 void loop() {
-  // pumps on. 
-  // drain for 1/2 second 
-    digitalWrite(videoCountpin1, HIGH); 
-    digitalWrite(videoCountpin2, LOW); 
-    analogWrite(ENB, 255); // full speed 
-
-    digitalWrite(pumpCountpin1, HIGH); 
-    digitalWrite(pumpCountpin2, LOW);
-    analogWrite(ENA, 255); // full speed
-    delay(500);
-    
+  // pumps on.
+  // drain for 1/2 second
+  digitalWrite(videoCountpin1, HIGH);
+  digitalWrite(videoCountpin2, LOW);
+  analogWrite(ENB, 255);  // full speed
+  delay(500);
 
   //off
-    digitalWrite(videoCountpin1, LOW); 
-    digitalWrite(videoCountpin2, LOW); 
-    analogWrite(ENB, 0); // full speed 
+  digitalWrite(videoCountpin1, LOW);
+  digitalWrite(videoCountpin2, LOW);
+  delay(500);
 
-    digitalWrite(pumpCountpin1, LOW); 
-    digitalWrite(pumpCountpin2, LOW);
-    analogWrite(ENA, 0); // full speed
-    delay(500);
-    
-    Serial.println("MOTOR OFF");
+
+  Serial.println("MOTOR OFF");
 }

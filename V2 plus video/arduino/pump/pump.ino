@@ -15,15 +15,19 @@ const int ENB = 10;
 
 
 
-// Web serial 
+// Web serial
 String data = "";
 
 
 void setup() {
   // Pump 1 initialise
-  pinMode(textCountpin1, OUTPUT); pinMode(textCountpin2, OUTPUT); pinMode(ENA, OUTPUT); 
+  pinMode(textCountpin1, OUTPUT);
+  pinMode(textCountpin2, OUTPUT);
+  pinMode(ENA, OUTPUT);
   // Pump 2 initialise
-  pinMode(videoCountpin1, OUTPUT); pinMode(videoCountpin2, OUTPUT); pinMode(ENB, OUTPUT); 
+  pinMode(videoCountpin1, OUTPUT);
+  pinMode(videoCountpin2, OUTPUT);
+  pinMode(ENB, OUTPUT);
 
 
   // Serial initalise
@@ -31,76 +35,86 @@ void setup() {
 }
 
 void loop() {
-// Read serial input:
-if (Serial.available() > 0){
-  data = Serial.readStringUntil('\n');
-  data.trim();
-  
-  // Run pump 2 based on js runPump command string
-  if (data == "runPump") {
-     // Pump 2 ON
-    digitalWrite(videoCountpin1, HIGH); 
-    digitalWrite(videoCountpin2, LOW); 
-    analogWrite(ENB, 255); // full speed  
-    delay(500);
-    // Pump 2 OFF
-    digitalWrite(videoCountpin1, LOW); 
-    digitalWrite(videoCountpin2, LOW);  
-    
-    // Send completion msg to p5 
-    Serial.println("Video pump done");
-  }
+  // Read serial input:
+  if (Serial.available() > 0) {
+    data = Serial.readStringUntil('\n');
+    data.trim();
 
-  else if (data.length() > 0){
-    int pumpCount = data.toInt() + 5;  // convert the string to an int
+    // Run pump 2 based on js runPump command string
+    if (data == "runPump") {
+      // Pump 2 ON
+      digitalWrite(videoCountpin1, HIGH);
+      digitalWrite(videoCountpin2, LOW);
+      analogWrite(ENB, 255);  // full speed
+      delay(500);
+      // Pump 2 OFF
+      digitalWrite(videoCountpin1, LOW);
+      digitalWrite(videoCountpin2, LOW);
 
-    
-  // Pulse pump 1 based on js charCount number str
-  for(int count = 0; count < pumpCount; count++){
+      // Send completion msg to p5
+      Serial.println("Video pump done");
 
-    // Text pump ON
-    digitalWrite(textCountpin1, HIGH); 
-    digitalWrite(textCountpin2, LOW);
-    analogWrite(ENA, 255); // full speed
-    delay(500);
-    // Text pump OFF
-    digitalWrite(textCountpin1, LOW); 
-    digitalWrite(textCountpin2, LOW);  
-    delay(500);
-    // Send completion msg to p5 
-    if (count == pumpCount -1){
-      Serial.println("Word processed");
     }
-  }
 
     // Reverse pump flow when js button is pressed
-}   else if (data == "reverseFlow") {
-  
-     // Video pump ON...REVERSE
-    digitalWrite(videoCountpin1, LOW); 
-    digitalWrite(videoCountpin2, HIGH); 
-    analogWrite(ENB, 255); // full speed  
-    delay(500);
-    // Video pump OFF
-    digitalWrite(videoCountpin1, LOW); 
-    digitalWrite(videoCountpin2, LOW);
-    delay(500);
+    else if (data == "reverseFlow") {
+      Serial.println("hello");
 
-     // Text pump ON...REVERSE
-    digitalWrite(textCountpin1, LOW); 
-    digitalWrite(textCountpin2, HIGH);
-    analogWrite(ENA, 255); // full speed
-    delay(500);
-    // Text pump OFF
-    digitalWrite(textCountpin1, LOW); 
-    digitalWrite(textCountpin2, LOW);  
-    delay(500); 
+      // int pumpCount = data.toInt() + 5;  // convert the string to an int
+      // for (int reverseCount = 0; reverseCount < pumpCount; reverseCount++){
+      for (int reverseCount = 0; reverseCount < 50; reverseCount++) {
+        // Video pump ON...REVERSE
+        digitalWrite(videoCountpin1, LOW);
+        digitalWrite(videoCountpin2, HIGH);
+        analogWrite(ENB, 255);  // full speed
+        delay(500);
+        // Video pump OFF
+        digitalWrite(videoCountpin1, LOW);
+        digitalWrite(videoCountpin2, LOW);
+        delay(500);
 
-    // Send completion msg to p5 
-    Serial.println("Drainage complete");
+        // Text pump ON...REVERSE
+        digitalWrite(textCountpin1, LOW);
+        digitalWrite(textCountpin2, HIGH);
+        analogWrite(ENA, 255);  // full speed
+        delay(500);
+        // Text pump OFF
+        digitalWrite(textCountpin1, LOW);
+        digitalWrite(textCountpin2, LOW);
+        delay(500);
+      }
+
+      // //debug
+      // digitalWrite(LED_BUILTIN, HIGH);  // turn the LED on (HIGH is the voltage level)
+      // delay(1000);                      // wait for a second
+      // digitalWrite(LED_BUILTIN, LOW);   // turn the LED off by making the voltage LOW
+      // delay(1000);                      // wait for a second
+
+      // Send completion msg to p5
+      Serial.println("Drainage complete");
+    }
+    // Run text pump
+    else if (data.length() > 0) {
+      int pumpCount = data.toInt() + 5;  // convert the string to an int
+
+
+      // Pulse text pump based on js charCount number str
+      for (int count = 0; count < pumpCount; count++) {
+
+        // Text pump ON
+        digitalWrite(textCountpin1, HIGH);
+        digitalWrite(textCountpin2, LOW);
+        analogWrite(ENA, 255);  // full speed
+        delay(500);
+        // Text pump OFF
+        digitalWrite(textCountpin1, LOW);
+        digitalWrite(textCountpin2, LOW);
+        delay(500);
+        // Send completion msg to p5
+        if (count == pumpCount - 1) {
+          Serial.println("Word processed");
+        }
+      }
+    }
   }
-
-
-
-} 
 }

@@ -6,11 +6,12 @@
 // VARIABLES: serial port
 let port;               // port
 let connectBtn;         // connect to arduino button
+let inputBtn;           // text button
 let reservoirBtn;       // flow back to reservoir button
 
 // VARIABLES: flags
 let nextInputReady = false; // flag that will turn true when arduino serial data gets sent back
-let drainageComplete = false; // flag that will turn true when arduino is done draining to reservoir
+let drainageReady = false; // flag that will turn true when arduino is done draining to reservoir
 
 // VARIABLES: counters
 let inputMlCounter = 0; // input counter for text
@@ -102,9 +103,12 @@ function connectBtnClick() {
   if (!port.opened()) {
     port.open('Arduino', 9600);
     nextInputReady = true;
+    drainageReady = true;
   } else {
     port.close();
     nextInputReady = false;
+    drainageReady = false;
+
   }
 
 }
@@ -121,6 +125,7 @@ function inputBtnClick(){
     
     // Lock button
     nextInputReady = false;
+    drainageReady = false;
     inputBtn.attribute('disabled', true);
   } 
 }
@@ -128,9 +133,16 @@ function inputBtnClick(){
 // FUNCTION: PORT: send msg for counterflow
 function reservoirBtnClick(){
   if (port.opened()){
-    port.write('reverseFlow' + '\n'); // send signal to trigger reverse
-    // Lock button
-    reservoirBtn.attribute('disabled', true); 
+    port.write('reverseFlow\n'); // send signal to trigger reverse
+    // Lock buttons
+
+    drainageReady = false;
+    nextInputReady = false;
+
+    // reset counters
+    vidMlCounter = 0;
+    inputMlCounter = 0;
+    inputTotalml = 0;
   }
 }
 
@@ -185,40 +197,36 @@ let charCount = myInput.value().length;
   }
 
   // Flag to unlock reservoir button
-  if (drainageComplete) {
+  if (drainageReady) {
   reservoirBtn.removeAttribute('disabled'); // btn unlock
  } else {
   reservoirBtn.attribute('disabled', true); // btn lock
  }
 
 // Reading from the port
-if (port && port.opened()){  // if port exists & if the port is opened  
-  let greenLight = port.readUntil('\n');      // assign port reading to variable greenLight
-  let reservoirSign = port.readUntil('\n');   // assign port reading to variable reservoirSign
+if (port && port.opened()) {
+  let msg = port.readUntil('\n');
+  if (msg.length > 0) {
+    msg = msg.trim();
 
-  if (greenLight.length > 0) { // reading to unlock inputbtn
-    if (greenLight.trim() === 'Word processed'){
+    if (msg === 'Word processed') {
       nextInputReady = true;
-    } 
-  } 
-  if (reservoirSign.length > 0) { // read to unlock reservoirbtn
-    if (reservoirSign.trim() === 'Drainage complete'){
-    drainageComplete = true;
-  }  
-} 
+      drainageReady = true;
+      console.log('✅ Word processed received');
+    } else if (msg === 'Drainage complete') {
+      drainageReady = true;
+      nextInputReady = true;
+      console.log('✅ Drainage complete received');
+    } else if (msg === 'hello') {    // debug to check if arduino is getting msgs
+      console.log('✅ reverseFlow acknowledged');
+    } else {
+      console.log('Received:', msg); // catch-all debug
+    }
+  }
 }
 
-// PORT: Read 'Drainage complete' message from Arduino and unlock button
-// if (port && port.opened()){
-// let reservoirSign = port.readUntil('\n');
-// if (reservoirSign.length > 0) { // read variable
-//   if (reservoirSign.trim() === 'Drainage complete'){
-//     drainageComplete = true;
-//   }  
-// }
-// }
 
-if (drainageComplete) {
+if (drainageReady) {
   reservoirBtn.removeAttribute('disabled'); // btn unlock
  } else {
   reservoirBtn.attribute('disabled', true); // btn lock
@@ -287,7 +295,7 @@ function onPlayerStateChange(event){
       console.log('interval fired');
       // run code that should happen intermittently here
     if (port.opened()) {
-      console.log("port.opened():", port.opened());
+      console.log("port.opened():", port.opened()); // debug
       port.write("runPump\n"); // send cmd to arduino for pump activation
       vidMlCounter +=1; // update vid ml counter
       console.log('working');
