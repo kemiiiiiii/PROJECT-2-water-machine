@@ -220,7 +220,7 @@ if (port && port.opened()) {
     } else if (msg === 'hello') {    // debug to check if arduino is getting msgs
       console.log('✅ reverseFlow acknowledged');
     } else {
-      console.log('Received:', msg); // catch-all debug
+      console.log('Received:', msg); // catch any debug
     }
   }
 }
@@ -278,14 +278,18 @@ function onYouTubeIframeAPIReady() {
   player = new YT.Player('player', {
     height: '1480', 
     width: '800',
-    videoId: 'EF8C4v7JIbA',
+    // videoId: 'EF8C4v7JIbA',
+    playerVars:{
+      listType: 'playlist',
+      list: 'PLyP0vkaFRFU1c5kBm0lyh29RMdCKJSqmK'
+    }, 
     events:{
       'onStateChange': onPlayerStateChange
     }
   });
 }
 
-// FUNCTION: triggers when video state changes
+// FUNCTION: triggers when video state changes. send serial msg every 5s
 function onPlayerStateChange(event){
   if (event.data === YT.PlayerState.PLAYING){
     console.log("Video playing!");
@@ -316,6 +320,5 @@ function onPlayerStateChange(event){
 // for later: add a video queue and make it so that
 // when text tank is full, send msg to arduino so that
 // motor flow is reversed and tank is drained
-
-
+// update: ^ not possible unless water pump freq is monitored
 
