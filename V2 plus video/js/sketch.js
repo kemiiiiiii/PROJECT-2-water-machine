@@ -74,7 +74,7 @@ function setup() {
   push();
   reservoirBtn = createButton('Back to Reservoir');
   reservoirBtn.size(250,50);
-  reservoirBtn.position(width/2-130, height/2 +710);
+  reservoirBtn.position(width/2-130, height/2 + 750);
   reservoirBtn.mousePressed(reservoirBtnClick);
     // styling
     reservoirBtn.style('font-family', 'Helvetica');
@@ -87,7 +87,7 @@ function setup() {
   
   // INITIALISE: input field
   myInput = createInput();
-  myInput.position(200, height/2 + 160);
+  myInput.position(width/4.5, height/2 + 130);
   myInput.size(1000,100);
     // styling
     myInput.style('z-index', '20');
@@ -184,11 +184,11 @@ let charCount = myInput.value().length;
   textAlign(LEFT,CENTER);
     textFont(font);
     textSize(30);
-    text('Processed.', width/7, 1190);
-    text('Send more -->', width/7, 1230);
+    text('Processed.', width/10, 1190);
+    text('Send more -->', width/10, 1230);
     noStroke();
     fill('green');
-    circle(width/9, 1210, 30);
+    circle(width/13, 1210, 30);
   pop();
 
     inputBtn.removeAttribute('disabled'); // unlock button
@@ -239,7 +239,7 @@ if (drainageReady) {
   // title text
   push();
   textAlign(CENTER, CENTER);
-  textSize(150);
+  textSize(200);
   textFont(boldFont);
   fill('#002a6e');
   text('Word-To-Water', width/2, 300);
@@ -265,8 +265,8 @@ if (drainageReady) {
   textAlign(LEFT,CENTER);
     textFont(font);
     textSize(30);
-    text('Text water usage (ml):   ' + (inputTotalml), width/2.5-40, height/3 + 880);
-    text('Video water usage (ml):  ' + (vidMlCounter) , width/2.5-40, height/3 + 920);
+    text('Text water usage (ml):   ' + (inputTotalml), width/2.5, height/3 + 950);
+    text('Video water usage (ml):  ' + (vidMlCounter) , width/2.5, height/3 + 1000);
   pop();
 }
 
