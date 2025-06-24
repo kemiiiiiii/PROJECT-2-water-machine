@@ -184,11 +184,11 @@ let charCount = myInput.value().length;
   textAlign(LEFT,CENTER);
     textFont(font);
     textSize(30);
-    text('Processed.', width/10, 1190);
-    text('Send more -->', width/10, 1230);
+    text('Processed.', width/10, 1150);
+    text('Send more -->', width/10, 1190);
     noStroke();
     fill('green');
-    circle(width/13, 1210, 30);
+    circle(width/13, 1170, 30);
   pop();
 
     inputBtn.removeAttribute('disabled'); // unlock button
