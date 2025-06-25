@@ -40,16 +40,18 @@ void loop() {
     data = Serial.readStringUntil('\n');
     data.trim();
 
-    // Run pump 2 based on js runPump command string
+    // Run VIDEO pump based on js runPump command string
     if (data == "runPump") {
-      // Pump 2 ON
-      digitalWrite(videoCountpin1, HIGH);
-      digitalWrite(videoCountpin2, LOW);
-      analogWrite(ENB, 255);  // full speed
-      delay(500);
-      // Pump 2 OFF
-      digitalWrite(videoCountpin1, LOW);
-      digitalWrite(videoCountpin2, LOW);
+      // Video pump ON...for 10 seconds
+      for (int tenCount = 0; tenCount < 1; tenCount++){
+        digitalWrite(videoCountpin1, HIGH);
+        digitalWrite(videoCountpin2, LOW);
+        analogWrite(ENB, 255);  // full speed
+        delay(500);
+        // Video pump OFF
+        digitalWrite(videoCountpin1, LOW);
+        digitalWrite(videoCountpin2, LOW);
+        delay(500);
 
       // Send completion msg to p5
       Serial.println("Video pump done");
