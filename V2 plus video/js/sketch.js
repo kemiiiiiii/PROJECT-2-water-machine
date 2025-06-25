@@ -12,6 +12,7 @@ let reservoirBtn;       // flow back to reservoir button
 // VARIABLES: flags
 let nextInputReady = false; // flag that will turn true when arduino serial data gets sent back
 let drainageReady = false; // flag that will turn true when arduino is done draining to reservoir
+let vidSignal = false; // activate video code 
 
 // VARIABLES: counters
 let inputMlCounter = 0; // input counter for text
@@ -210,12 +211,17 @@ if (port && port.opened()) {
     msg = msg.trim();
 
     if (msg === 'Word processed') {
-      nextInputReady = true;
-      drainageReady = true;
+      vidSignal = true;
       console.log('✅ Word processed received');
-    } else if (msg === 'Drainage complete') {
+    } else if (msg === 'Video pump done'){
+      nextInputReady = true;
+      drainageReady = true;
+    } 
+    
+    else if (msg === 'Drainage complete') {
       drainageReady = true;
       nextInputReady = true;
+      vidSignal = true;
       console.log('✅ Drainage complete received');
     } else if (msg === 'hello') {    // debug to check if arduino is getting msgs
       console.log('✅ reverseFlow acknowledged');
@@ -232,6 +238,12 @@ if (drainageReady) {
   reservoirBtn.attribute('disabled', true); // btn lock
  }
 
+ if (vidSignal){
+    inputBtn.attribute('disabled', true); // lock button
+ } else{
+    inputBtn.removeAttribute('disabled'); // unlock button
+
+ }
 
 ////////////////////////////////
 ////// GRAPHICS ///////
@@ -298,7 +310,7 @@ function onPlayerStateChange(event){
     pumpInterval = setInterval(() =>{ 
       console.log('interval fired');
       // run code that should happen intermittently here
-    if (port.opened()) {
+    if (port.opened() && (vidSignal = true)) {
       console.log("port.opened():", port.opened()); // debug
       port.write("runPump\n"); // send cmd to arduino for pump activation
       vidMlCounter +=1; // update vid ml counter

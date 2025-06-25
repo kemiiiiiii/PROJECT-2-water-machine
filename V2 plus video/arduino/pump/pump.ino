@@ -40,10 +40,10 @@ void loop() {
     data = Serial.readStringUntil('\n');
     data.trim();
 
-    // Run video pump based on js runPump command string
+    // Run VIDEO pump based on js runPump command string
     if (data == "runPump") {
       // Video pump ON...for 10 seconds
-      for (int tenCount = 0; tenCount < 10; tenCount++){
+      for (int tenCount = 0; tenCount < 5; tenCount++){
         digitalWrite(videoCountpin1, HIGH);
         digitalWrite(videoCountpin2, LOW);
         analogWrite(ENB, 255);  // full speed
@@ -96,7 +96,7 @@ void loop() {
       // Send completion msg to p5
       Serial.println("Drainage complete");
     }
-    // Run text pump
+    // Run TEXT pump
     else if (data.length() > 0) {
       int pumpCount = data.toInt() + 5;  // convert the string to an int
 
