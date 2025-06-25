@@ -59,7 +59,7 @@ void loop() {
     }
 
     // Reverse pump flow when js button is pressed
-    else if (data == "reverseFlow") {
+    } else if (data == "reverseFlow") {
       Serial.println("hello");
 
       // int pumpCount = data.toInt() + 5;  // convert the string to an int

@@ -62,7 +62,7 @@ function setup() {
  inputBtn = createButton('ENTER');
  inputBtn.size(500, 100);
  inputBtn.position(width/2-260, height/2 + 320);
-//  inputBtn.mousePressed(inputBtnClick);
+ inputBtn.mousePressed(inputBtnClick);
    // styling
    inputBtn.style('font-family', 'Helvetica');
    inputBtn.style('z-index', '20');
@@ -112,21 +112,21 @@ function connectBtnClick() {
 }
 ////PORT: SENDING INPUT/////
 // FUNCTION: PORT: Send typed input to Arduino over webserial
-// function inputBtnClick(){
-//  if(port.opened()){
-//    let charCount = myInput.value().length;
-//    let charCountStr = String(charCount);    // Convert charcount to string
-//    port.write(charCountStr + '\n');         // Send charcount with newline
-//    // counter update
-//    inputMlCounter += charCount +=5; // per msg
-//    inputTotalml += charCount; // accumulate variable
+function inputBtnClick(){
+ if(port.opened()){
+   let charCount = myInput.value().length;
+   let charCountStr = String(charCount);    // Convert charcount to string
+   port.write(charCountStr + '\n');         // Send charcount with newline
+   // counter update
+   inputMlCounter += charCount +=5; // per msg
+   inputTotalml += charCount; // accumulate variable
   
-//    // Lock button
-//    nextInputReady = false;
-//    drainageReady = false;
-//    inputBtn.attribute('disabled', true);
-//  }
-// }
+   // Lock button
+   nextInputReady = false;
+   drainageReady = false;
+   inputBtn.attribute('disabled', true);
+ }
+}
 
 // UPDATED: ENTER key pressed
 
