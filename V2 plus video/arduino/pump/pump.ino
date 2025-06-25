@@ -43,7 +43,7 @@ void loop() {
     // Run VIDEO pump based on js runPump command string
     if (data == "runPump") {
       // Video pump ON...for 10 seconds
-      for (int tenCount = 0; tenCount < 1; tenCount++){
+      for (int tenCount = 0; tenCount < 5; tenCount++){
         digitalWrite(videoCountpin1, HIGH);
         digitalWrite(videoCountpin2, LOW);
         analogWrite(ENB, 255);  // full speed

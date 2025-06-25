@@ -48,6 +48,8 @@ video = createVideo(['/assets/clip2.mp4']);
 video.size(width, height);
 video.show();
 video.id('video');
+  // restart the same video
+  video.onended(videoEnd);
 
  // INITIALISE: Font
  textFont(font);
@@ -108,7 +110,7 @@ function connectBtnClick() {
    port.open('Arduino', 9600);
    nextInputReady = true;
    drainageReady = true;
-  //  video.play();
+
  } else {
    port.close();
    nextInputReady = false;
@@ -117,6 +119,15 @@ function connectBtnClick() {
  }
 
 }
+
+
+// FUNCTION: Restart video
+function videoEnd(){
+  if (nextInputReady && drainageReady){
+    video.play();
+  }
+}
+
 ////PORT: SENDING INPUT/////
 // FUNCTION: PORT: Send typed input to Arduino over webserial
 function inputBtnClick(){
@@ -241,7 +252,7 @@ if (port && port.opened()) {
 
    if (msg === 'Word processed') {
      port.write("runPump\n"); // send cmd to arduino for pump activation
-     vidMlCounter +=1; // update vid ml counter
+     vidMlCounter +=5; // update vid ml counter
      video.play();
      console.log('✅ Word processed received');
 
@@ -290,7 +301,7 @@ if (drainageReady) {
    fill('#002a6e');
    text('type something!', width/2, height/3 -50);
    textSize(40);
-   text('The more you type, the more water the pump transfers.', width/2, (height/3 + 300)-200);
+   text('The more you type, the more water the pump uses.', width/2, (height/3 + 300)-200);
    text('This measures against the video to the right, which will', width/2, (height/3 + 400)-200);
    text('drive its own pump.', width/2, (height/3 + 450)-200);
    textFont(boldFont);
