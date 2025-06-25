@@ -11,7 +11,7 @@ html, body {
 canvas {
   display: block;
 }
-
+/* 
 #player {
   position: absolute;     
   top: 0;                  
@@ -19,6 +19,15 @@ canvas {
   width: 50vw;             
   height: 100vh;           
   z-index: 10;             
+} */
+
+#video {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50vw;
+  height: 100vh;
+  z-index: 10;
 }
 
 #sketch {

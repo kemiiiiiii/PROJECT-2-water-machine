@@ -21,6 +21,7 @@ let inputTotalml = 0;   // charCount input + starting 5ml text input
 // VARIABLES: video
 let player;
 let pumpInterval; // stores vid pump time pause intervals
+let video; // local ver
 
 // VARIABLES: font
 let font;
@@ -41,6 +42,12 @@ function setup() {
  let cnv = createCanvas(windowWidth/2, windowHeight);
  cnv.id('sketch');
  port = createSerial();
+
+ // INITIALISE: Video (LOCAL)
+video = createVideo(['/assets/clip2.mp4']);
+video.size(width, height);
+video.show();
+video.id('video');
 
  // INITIALISE: Font
  textFont(font);
@@ -81,7 +88,6 @@ function setup() {
    reservoirBtn.style('font-size', '25px');
    // reservoirBtn.style('color', '#ffffff');
    // reservoirBtn.style('background-color', '#09203b');
-
  pop();
   // INITIALISE: input field
  myInput = createInput();
@@ -102,6 +108,7 @@ function connectBtnClick() {
    port.open('Arduino', 9600);
    nextInputReady = true;
    drainageReady = true;
+  //  video.play();
  } else {
    port.close();
    nextInputReady = false;
@@ -175,6 +182,7 @@ function onTyping(){
 
 
 function draw() {
+
 // Define character count in draw
 let charCount = myInput.value().length;
 
@@ -194,6 +202,7 @@ let charCount = myInput.value().length;
 
 // Update button label based on connection status
  connectBtn.html(port.opened() ? 'Disconnect' : 'Connect to Arduino');
+
 
 
 ////PORT: READING ARDUINO INPUT/////
@@ -231,10 +240,17 @@ if (port && port.opened()) {
    msg = msg.trim();
 
    if (msg === 'Word processed') {
-     nextInputReady = true;
-     drainageReady = true;
+     port.write("runPump\n"); // send cmd to arduino for pump activation
+     vidMlCounter +=1; // update vid ml counter
+     video.play();
      console.log('✅ Word processed received');
-   } else if (msg === 'Drainage complete') {
+
+   } else if (msg === 'Video pump done'){
+      nextInputReady = true;
+      drainageReady = true;
+      video.pause();
+
+    } else if (msg === 'Drainage complete') {
      drainageReady = true;
      nextInputReady = true;
      console.log('✅ Drainage complete received');
@@ -294,51 +310,51 @@ if (drainageReady) {
 
 ////////// LOAD YOUTUBE VIDEO
 
-// FUNCTION: load the youtube video(s)
-function onYouTubeIframeAPIReady() {
- player = new YT.Player('player', {
-   height: '1480',
-   width: '800',
-   // videoId: 'EF8C4v7JIbA',
-   playerVars:{
-     listType: 'playlist',
-     list: 'PLyP0vkaFRFU1c5kBm0lyh29RMdCKJSqmK'
-   },
-   events:{
-     'onStateChange': onPlayerStateChange
-   }
- });
-}
+// // FUNCTION: load the youtube video(s)
+// function onYouTubeIframeAPIReady() {
+//  player = new YT.Player('player', {
+//    height: '1480',
+//    width: '800',
+//    // videoId: 'EF8C4v7JIbA',
+//    playerVars:{
+//      listType: 'playlist',
+//      list: 'PLyP0vkaFRFU1c5kBm0lyh29RMdCKJSqmK'
+//    },
+//    events:{
+//      'onStateChange': onPlayerStateChange
+//    }
+//  });
+// }
 
-// FUNCTION: triggers when video state changes. send serial msg every 5s
-function onPlayerStateChange(event){
- if (event.data === YT.PlayerState.PLAYING){
-   console.log("Video playing!");
+// // FUNCTION: triggers when video state changes. send serial msg every 5s
+// function onPlayerStateChange(event){
+//  if (event.data === YT.PlayerState.PLAYING){
+//    console.log("Video playing!");
 
-   // Pump interval
-   pumpInterval = setInterval(() =>{
-     console.log('interval fired');
-     // run code that should happen intermittently here
-   if (port.opened()) {
-     console.log("port.opened():", port.opened()); // debug
-     port.write("runPump\n"); // send cmd to arduino for pump activation
-     vidMlCounter +=1; // update vid ml counter
-     console.log('working');
-   } else {
-     console.log('port not open');
-   }
-   }, 5000); // every 5 seconds
+  //  // Pump interval
+  //  pumpInterval = setInterval(() =>{
+  //    console.log('interval fired');
+  //    // run code that should happen intermittently here
+  //  if (port.opened()) {
+  //    console.log("port.opened():", port.opened()); // debug
+  //    port.write("runPump\n"); // send cmd to arduino for pump activation
+  //    vidMlCounter +=1; // update vid ml counter
+  //    console.log('working');
+  //  } else {
+  //    console.log('port not open');
+  //  }
+  //  }, 5000); // every 5 seconds
   
   
- } else {
-   // stop pump if paused / stop interval function
-   clearInterval(pumpInterval);
-   console.log('not working');
+//  } else {
+//    // stop pump if paused / stop interval function
+//    clearInterval(pumpInterval);
+//    console.log('not working');
 
- }
-}
+//  }
+// }
 
-// fix button locks for connecting to arduino Dx
+
 
 
 
