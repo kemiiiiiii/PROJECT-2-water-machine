@@ -317,8 +317,5 @@ function onPlayerStateChange(event){
   }
 }
 
-// for later: add a video queue and make it so that
-// when text tank is full, send msg to arduino so that
-// motor flow is reversed and tank is drained
-// update: ^ not possible unless water pump freq is monitored
+// fix button locks for connecting to arduino Dx
 
